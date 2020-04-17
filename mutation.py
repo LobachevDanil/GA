@@ -27,6 +27,29 @@ class SimpleMutation(Mutation):
         return np.array(new_x)
 
 
+class RealValuedMutation(Mutation):
+    def __init__(self, delta, m):
+        super().__init__(delta)
+        self.m = m
+
+    def calculate_d(self):
+        result = 0
+        for i in range(self.m):
+            s = 1 if rnd.random() <= 1 / self.m else 0
+            result += s / (2 ** i)
+
+        return result
+
+    def mutate(self, x):
+        new_x = []
+        for i in range(len(x)):
+            sign = -1 if rnd.random() <= 0.5 else 1
+            alpha = 0.5 * self.delta
+            d = self.calculate_d()
+            new_x.append(x[i] + sign * alpha * d)
+        return np.array(new_x)
+
+
 class HeterogeneousMutation(Mutation):
     def __init__(self, delta, min_value, max_value, population_count, b):
         super().__init__(delta)

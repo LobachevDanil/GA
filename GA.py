@@ -7,14 +7,14 @@ from parents_selector import *
 from selection import *
 import test_functions
 
-ITERATION_LIMIT = 100
-SELECTION_COUNT = 10
+ITERATION_LIMIT = 80
+POPULATION_COUNT = 30
 
 
 def get_random_grid(dim, min_value, max_value, grid_ann):
     """Заполняет векторы случайными значениями"""
-    grid = np.zeros((grid_ann ** dim, dim))
-    for i in range(grid_ann ** dim):
+    grid = np.zeros((grid_ann * dim, dim))
+    for i in range(grid_ann * dim):
         for j in range(dim):
             grid[i][j] = min_value + rnd.random() * (max_value - min_value)
 
@@ -26,9 +26,11 @@ def get_max(population):
 
 
 def run_GA(population, delta, p_m):
-    former = Panmixia(len(population))
+    former = Inbreeding(population.shape[0])
     reproducer = IntermediateRecombination(population.shape[1])
     mutation = SimpleMutation(delta, p_m)
+    # mutation = RealValuedMutation(delta, 4)
+    # mutation = HeterogeneousMutation(delta, TEST.a, TEST.b, population.shape[0], 3.4)
     selector = TruncationSelection(population.shape[0], f)
     for i in range(ITERATION_LIMIT):
         pairs = former.select(population)
@@ -45,7 +47,7 @@ def run_GA(population, delta, p_m):
 
 
 # Можно изменить номер теста, чтобы задать другую функцию
-TEST = test_functions.test3
+TEST = test_functions.TEST_7
 
 
 def f(x):
@@ -53,7 +55,7 @@ def f(x):
 
 
 def main():
-    ann = 20
+    ann = POPULATION_COUNT
     G_grid = get_random_grid(TEST.dim, TEST.a, TEST.b, ann)
     result = run_GA(G_grid, (TEST.b - TEST.a) / (10 * ann), 0.1)
 
